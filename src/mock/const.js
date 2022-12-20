@@ -10,7 +10,7 @@ export const DESCRIPTION = [
   'Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus',
 ];
 
-export const DESTINATION = ['Amsterdam', 'Geneva', 'Chamonix', 'Saint Petersburg', 'Budapest', 'Prague', 'Minsk', 'Paris', 'Berlin', 'Rome', 'Madrid', 'Warszawa'];
+export const DESTINATION = ['Amsterdam', 'Geneva', 'Chamonix', 'Saint Petersburg', 'Budapest', 'Prague', 'Minsk', 'Paris', 'Berlin', 'Rome', 'Madrid', 'Warszawa','Barnaul'];
 
 export const OFFERS = ['Upgrade to business class', 'Add luggage','Switch to comfort','Choose seats', 'Add meal', 'Travel by train', 'Book tickets', 'Choose temperature', 'Choose comfort class', 'Choose business class', 'Musical accompaniment'];
 

@@ -1,5 +1,7 @@
 import {createElement} from '../render.js';
-import {pointsType } from '../const.js'
+import { pointsType, DATE_FORMAT } from '../const.js';
+import { DESTINATION } from '../mock/const.js';
+import { getFormatDate } from '../utils/utils.js';
 
 const createInputTypeItemMarkup = (types) =>
   types.map((typePoint) => {
@@ -14,9 +16,31 @@ const createOptionValueMarkup = (destinations) => destinations
   .map((destination) => `
       <option value="${destination}"></option>`).join('\n');
 
+const createOffersAvailableMarkup = (offers) => offers.map((offer) => `<div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}">
+    <label class="event__offer-label" for="event-offer-${offer.title}-1">
+      <span class="event__offer-title">${offer.title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${offer.basePrice}</span>
+    </label>
+    </div>`).join('\n');
 
 
-function createFormCreationTemplate() {
+const isOffers = (offers) => (offers.length > 0) ? `<section        class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        <div class="event__available-offers">
+        ${createOffersAvailableMarkup(offers)}
+        </div>
+      </section>`
+  : '';
+
+
+
+const createFormCreationTemplate = (point) => {
+ console.log(point)
+  const {type, dateFrom, dateTo, basePrice, offers } = point;
+  const {dateShort, dateFull, time, dateValue} = DATE_FORMAT;
+
   return (
     `<li class="trip-events__item">
     <form class="event event--edit" action="#" method="post">
@@ -43,16 +67,16 @@ function createFormCreationTemplate() {
           </label>
           <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${createOptionValueMarkup(destinations)}
+            ${createOptionValueMarkup(DESTINATION)}
           </datalist>
         </div>
 
         <div class="event__field-group  event__field-group--time">
           <label class="visually-hidden" for="event-start-time-1">From</label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="19/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${getFormatDate(dateFrom, dateValue)} ${getFormatDate(dateFrom, time)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">To</label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="19/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${getFormatDate(dateTo, dateValue)} ${getFormatDate(dateTo, time)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -71,50 +95,8 @@ function createFormCreationTemplate() {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" checked>
-              <label class="event__offer-label" for="event-offer-luggage-1">
-                <span class="event__offer-title">Add luggage</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">30</span>
-              </label>
-            </div>
+          ${createOffersAvailableMarkup(offers)}
 
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-comfort-1" type="checkbox" name="event-offer-comfort" checked>
-              <label class="event__offer-label" for="event-offer-comfort-1">
-                <span class="event__offer-title">Switch to comfort class</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">100</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-meal-1" type="checkbox" name="event-offer-meal">
-              <label class="event__offer-label" for="event-offer-meal-1">
-                <span class="event__offer-title">Add meal</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">15</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-seats-1" type="checkbox" name="event-offer-seats">
-              <label class="event__offer-label" for="event-offer-seats-1">
-                <span class="event__offer-title">Choose seats</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">5</span>
-              </label>
-            </div>
-
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-train-1" type="checkbox" name="event-offer-train">
-              <label class="event__offer-label" for="event-offer-train-1">
-                <span class="event__offer-title">Travel by train</span>
-                &plus;&euro;&nbsp;
-                <span class="event__offer-price">40</span>
-              </label>
-            </div>
           </div>
         </section>
 
@@ -136,12 +118,16 @@ function createFormCreationTemplate() {
     </form>
   </li>`
   );
-}
+};
 
 
-export default class FormCreationView {
+export default class FormAddNewPointView {
+  constructor({point}) {
+    this.point = point;
+  }
+
   getTemplate() {
-    return createFormCreationTemplate();
+    return createFormCreationTemplate(this.point);
   }
 
   getElement() {

@@ -34,6 +34,7 @@ const generateOffer = () => ({
   priceOffer: getRandomInteger(MinCount.OFFER_PRICE, MaxCount.OFFER_PRICE) * 10,
 });
 
+
 const generateOffersList = () => new Array(pointsType.length).fill('').map((type, index) => ({
   typeOffer: pointsType[index],
   offers: Array.from({length: getRandomInteger(MinCount.OFFER_COUNT, MaxCount.OFFER_COUNT)}, generateOffer)
