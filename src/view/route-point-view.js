@@ -13,7 +13,7 @@ const createOffersMarkup = (offers) => (offers.length) ?
 
 
 const createRoutePointTemplate = (point) => {
-  const {type, dateFrom, dateTo, basePrice, offers } = point;
+  const {type, dateFrom, dateTo, basePrice, offers, destination } = point;
   const {dateShort, dateFull, time} = DATE_FORMAT;
 
   return (
@@ -23,7 +23,7 @@ const createRoutePointTemplate = (point) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${type} Amsterdam</h3>
+        <h3 class="event__title">${type} ${destination.destinationName}</h3>
         <div class="event__schedule">
           <p class="event__time">
             <time class="event__start-time" datetime="${getFormatDate(dateFrom, dateFull)}T${getFormatDate(dateFrom, time)}">${getFormatDate(dateFrom, time)}</time>
