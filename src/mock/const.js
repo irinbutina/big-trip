@@ -28,5 +28,5 @@ export const MaxCount = {
   OFFER_COUNT: 8,
   PRICE: 9,
   OFFER_PRICE: 9,
-  DAYS_GAP: 7,
+  DAYS_GAP: 9,
 };
