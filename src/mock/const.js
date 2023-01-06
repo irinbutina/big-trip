@@ -25,7 +25,7 @@ export const MinCount = {
 export const MaxCount = {
   DESCRIPTION_COUNT: 5,
   IMG_COUNT: 6,
-  OFFER_COUNT: 8,
+  OFFER_COUNT: 6,
   PRICE: 9,
   OFFER_PRICE: 9,
   DAYS_GAP: 9,

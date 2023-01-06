@@ -1,44 +1,29 @@
 import { createElement } from '../render.js';
 import { pointsType, DATE_FORMAT } from '../const.js';
-import { DESTINATION } from '../mock/const.js';
-import { getFormatDate } from '../utils/utils.js';
+import { getFormatDate, getOfferAtr, getPossibleOffers, getCurrentDestination } from '../utils/utils.js';
 
-const createInputTypeItemMarkup = (types) =>
-  types.map((typePoint) => {
+const createPointsTypeMenuTemplate = (currentType, id) =>
+  pointsType.map((typePoint) => {
     const typeLowerCase = typePoint.toLowerCase();
     return `<div class="event__type-item">
-      <input id="event-type-${typeLowerCase}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeLowerCase}">
-      <label class="event__type-label  event__type-label--${typeLowerCase}" for="event-type-${typeLowerCase}-1">${typePoint}</label>
+      <input id="event-type-${typeLowerCase}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeLowerCase}" ${currentType === typePoint ? 'checked' : ''}>
+      <label class="event__type-label  event__type-label--${typeLowerCase}" for="event-type-${typeLowerCase}-${id}">${typePoint}</label>
   </div>`;
   }).join('\n');
 
-const createOptionValueMarkup = (destinations) => destinations
+const createDestinationsListTemplate = (destinations) => destinations
   .map((destination) => `
       <option value="${destination}"></option>`).join('\n');
 
-const createOffersAvailableMarkup = (offers) => offers.map((offer) => `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title}-1" type="checkbox" name="event-offer-${offer.title}">
-    <label class="event__offer-label" for="event-offer-${offer.title}-1">
-      <span class="event__offer-title">${offer.title}</span>
-      &plus;&euro;&nbsp;
-      <span class="event__offer-price">${offer.priceOffer}</span>
-    </label>
-    </div>`).join('\n');
+
+const getDestinationCurrentName = (id, destinations) => destinations.map((destination) => id === destination.id ? destination.destinationName : '').join('');
 
 
-const isOffers = (offers) => (offers.length > 0) ? `<section        class="event__section  event__section--offers">
-        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-        <div class="event__available-offers">
-        ${createOffersAvailableMarkup(offers)}
-        </div>
-      </section>`
-  : '';
-
-const createPhotoListMarkup = (photosList) => photosList
-  .map((photo, index) => (`<img class="event__photo" src="${photo.src}" alt="${photo.description}${index + 1}">`
+const createPhotoListTemplate = (pictures) => pictures
+  .map((picture) => (`<img class="event__photo" src="${picture.src}" alt="${picture.description}">`
   )).join('\n');
 
-const createDestinationMarkup = (destination) => {
+const createDestinationTemplate = (destination) => {
   const { description, pictures } = destination;
   return `
       <section class="event__section  event__section--destination">
@@ -46,18 +31,50 @@ const createDestinationMarkup = (destination) => {
         <p class="event__destination-description">${description}</p>
         <div class="event__photos-container">
           <div class="event__photos-tape">
-            ${createPhotoListMarkup(pictures)}
+            ${createPhotoListTemplate(pictures)}
           </div>
         </div>
       </section>`;
 };
 
-const createFormCreationTemplate = (point) => {
-  console.log(point)
-  const { type, dateFrom, dateTo, offers, destination } = point;
+const createOffersAvailableTemplate = (offers, offersId) => offers.map((offer) => {
+  const {title, priceOffer, id} = offer;
+  const checked = offersId.includes(id)
+    ? 'checked'
+    : '';
+  return (
+    `<div class="event__offer-selector">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getOfferAtr(title)}-${ id }" type="checkbox" name="event-offer-${getOfferAtr(title)}" ${ checked }>
+    <label class="event__offer-label" for="event-offer-${getOfferAtr(title)}-${ id }">
+      <span class="event__offer-title">${title}</span>
+      &plus;&euro;&nbsp;
+      <span class="event__offer-price">${priceOffer}</span>
+    </label>
+    </div>`
+  );
+}).join('\n');
+
+const isOffers = (offers, offersId) => offers.length ? `<section  class="event__section  event__section--offers">
+        <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+        <div class="event__available-offers">
+        ${createOffersAvailableTemplate(offers, offersId)}
+        </div>
+      </section>`
+  : '';
+
+const createFormCreationTemplate = ({point, offers, destinations}) => {
+  const {id, type, dateFrom, dateTo, offersId, destinationId, basePrice} = point;
   const { time, dateValue } = DATE_FORMAT;
-  const destinations = DESTINATION;
   const icon = type.toLowerCase();
+
+  const possibleOffers = getPossibleOffers(offers, type).offers;
+  const checkedOffers = isOffers(possibleOffers, offersId);
+  const pointsTypeMenu = createPointsTypeMenuTemplate(type, id);
+  const destination = getCurrentDestination(destinations, destinationId);
+  const destinationTemplate = createDestinationTemplate(destination);
+  const destinationsList = destinations.map((dest) => dest.destinationName);
+  const destinationCurrentName = getDestinationCurrentName(destinationId, destinations);
+  const destinationsListTemplate = createDestinationsListTemplate(destinationsList);
 
   return (
     `<li class="trip-events__item">
@@ -73,18 +90,18 @@ const createFormCreationTemplate = (point) => {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Event type</legend>
-              ${createInputTypeItemMarkup(pointsType)}
+              ${pointsTypeMenu}
             </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
-          <label class="event__label  event__type-output" for="event-destination-1">
+          <label class="event__label  event__type-output" for="event-destination-${destinationId}">
           ${icon}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-${destinationId}" type="text" name="event-destination" value="${destinationCurrentName}" list="destination-list-1">
           <datalist id="destination-list-1">
-            ${createOptionValueMarkup(destinations)}
+            ${destinationsListTemplate}
           </datalist>
         </div>
 
@@ -101,14 +118,14 @@ const createFormCreationTemplate = (point) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
         </div>
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
       <section class="event__details">
-      ${isOffers(offers)}
-      ${createDestinationMarkup(destination)}
+      ${checkedOffers}
+      ${destinationTemplate}
       </section>
     </form>
   </li>`
@@ -117,12 +134,18 @@ const createFormCreationTemplate = (point) => {
 
 
 export default class FormAddNewPointView {
-  constructor({ point }) {
+  constructor({ point, offers, destinations}) {
     this.point = point;
+    this.offers = offers;
+    this.destinations = destinations;
   }
 
   getTemplate() {
-    return createFormCreationTemplate(this.point);
+    return createFormCreationTemplate({
+      point: this.point,
+      destinations: this.destinations,
+      offers: this.offers
+    });
   }
 
   getElement() {
