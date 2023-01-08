@@ -27,29 +27,19 @@ export default class RoutePointsPresenter {
     this.#offers = [...this.#offersModel.offers];
     this.#destinations = [...this.#destinationsModel.destinations];
 
-    const formEditViewAdd = new FormEditView({
-      // point: this.#routePoints[0],
-      // destinations: this.#destinations,
-      // offers: this.#offers,
-    });
-
-    const formEditViewEdit = new FormEditView({
-      point: this.#routePoints[0],
-      destinations: this.#destinations,
-      offers: this.#offers,
-    });
-
     render(this.#tripEventsListComponent, this.#tripEventsContainer);
-    render(formEditViewAdd, this.#tripEventsListComponent.element);
-    render(formEditViewEdit, this.#tripEventsListComponent.element);
-
     for (let i = 0; i < this.#routePoints.length; i++) {
-      const routePointView = new RoutePointView({
-        point: this.#routePoints[i],
-        offers: this.#offers,
-        destinations: this.#destinations,
-      });
-      render(routePointView, this.#tripEventsListComponent.element);
+      this.#renderPoint(this.#routePoints[i]);
     }
+  }
+
+  #renderPoint(point) {
+    const pointComponent = new RoutePointView({
+      point,
+      offers: this.#offers,
+      destinations: this.#destinations,
+    });
+
+    render(pointComponent, this.#tripEventsListComponent.element);
   }
 }
