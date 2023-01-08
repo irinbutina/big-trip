@@ -5,7 +5,7 @@ import OffersModel from './model/offers-model.js';
 import DestinationsModel from './model/destination-model.js';
 import RoutePointsPresenter from './presenter/route-points-presenter.js';
 
-import {render} from './render.js';
+import {render} from './utils/render.js';
 
 const siteHeaderElement = document.querySelector('.page-header');
 const siteMainElement = document.querySelector('.page-main');

@@ -1,32 +1,32 @@
-import {createElement} from '../render.js';
+import { createElement } from '../utils/render.js';
 import { getFormatDate, getPossibleOffers, getCurrentDestination } from '../utils/utils.js';
 import { DATE_FORMAT } from '../const.js';
 const NO_ADDITIONAL_OFFERS_TEXT = 'No additional offers';
 
 const createOffersMarkup = (offers) => (offers.length) ?
-  offers.map(({title, priceOffer }) =>
+  offers.map(({ title, priceOffer }) =>
     `<li class="event__offer">
           <span class="event__offer-title">${title}</span>
           &plus;&euro;&nbsp;
           <span class="event__offer-price">${priceOffer}</span>
         </li>`
-  ).join ('\n') : NO_ADDITIONAL_OFFERS_TEXT;
+  ).join('\n') : NO_ADDITIONAL_OFFERS_TEXT;
 
 
-const createRoutePointTemplate = ({point, offers, destinations}) => {
-  const {type, dateFrom, dateTo, basePrice, offersId, destinationId } = point;
+const createRoutePointTemplate = ({ point, offers, destinations }) => {
+  const { type, dateFrom, dateTo, basePrice, offersId, destinationId } = point;
   // console.log(offers)
 
   const typeLowerCase = type.toLowerCase();
 
-  const {dateShort, dateFull, time} = DATE_FORMAT;
+  const { dateShort, dateFull, time } = DATE_FORMAT;
 
   const possibleOffers = getPossibleOffers(offers, type).offers;
   // console.log(possibleOffers)
 
-  const offersIdChecked = possibleOffers.filter(({id}) =>
+  const offersIdChecked = possibleOffers.filter(({ id }) =>
     offersId.includes(id));
-    // console.log(offersIdChecked)
+  // console.log(offersIdChecked)
 
   const destination = getCurrentDestination(destinations, destinationId);
 
@@ -62,29 +62,32 @@ const createRoutePointTemplate = ({point, offers, destinations}) => {
 
 
 export default class RoutePointView {
-  constructor({point, offers, destinations }) {
-    this.point = point;
+  #point = null;
+  #element = null;
+
+  constructor({ point, offers, destinations }) {
+    this.#point = point;
     this.offers = offers;
     this.destinations = destinations;
   }
 
-  getTemplate() {
+  get template() {
     return createRoutePointTemplate({
-      point: this.point,
+      point: this.#point,
       destinations: this.destinations,
       offers: this.offers
     });
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

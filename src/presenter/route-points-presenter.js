@@ -2,12 +2,12 @@ import FormEditionView from '../view/form-editing-view.js';
 // import FormAddNewPointView from '../view/form-add-new-point-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import RoutePointView from '../view/route-point-view.js';
-import {render} from '../render.js';
+import { render } from '../utils/render.js';
 
 export default class RoutePointsPresenter {
   tripEventsListComponent = new TripEventsListView();
 
-  constructor({tripEventsContainer, pointsModel, offersModel, destinationsModel}) {
+  constructor({ tripEventsContainer, pointsModel, offersModel, destinationsModel }) {
     this.tripEventsContainer = tripEventsContainer;
     this.pointsModel = pointsModel;
     this.offersModel = offersModel;
@@ -15,9 +15,9 @@ export default class RoutePointsPresenter {
   }
 
   init() {
-    this.routePoints = [...this.pointsModel.getPoints()];
-    this.offers = [...this.offersModel.getOffers()];
-    this.destinations = [...this.destinationsModel.getDestinations()];
+    this.routePoints = [...this.pointsModel.points];
+    this.offers = [...this.offersModel.offers];
+    this.destinations = [...this.destinationsModel.destinations];
 
     // console.log(this.routePoints);
     // console.log(this.offers);
@@ -42,9 +42,9 @@ export default class RoutePointsPresenter {
     });
 
     render(this.tripEventsListComponent, this.tripEventsContainer);
-    // render(formAddNewPointView, this.tripEventsListComponent.getElement());
-    render(formEditionViewAdd, this.tripEventsListComponent.getElement());
-    render(formEditionViewEdit, this.tripEventsListComponent.getElement());
+    // render(formAddNewPointView, this.tripEventsListComponent.element);
+    render(formEditionViewAdd, this.tripEventsListComponent.element);
+    render(formEditionViewEdit, this.tripEventsListComponent.element);
 
     for (let i = 0; i < this.routePoints.length; i++) {
       const routePointView = new RoutePointView({
@@ -52,7 +52,7 @@ export default class RoutePointsPresenter {
         offers: this.offers,
         destinations: this.destinations,
       });
-      render(routePointView, this.tripEventsListComponent.getElement());
+      render(routePointView, this.tripEventsListComponent.element);
     }
   }
 }

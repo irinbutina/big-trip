@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import { createElement } from '../utils/render.js';
 import { pointsType, DATE_FORMAT } from '../const.js';
 import { getFormatDate, getOfferAtr, getPossibleOffers, getCurrentDestination } from '../utils/utils.js';
 
@@ -24,7 +24,7 @@ const createRollupButtonTemplate = () =>
     <span class="visually-hidden">Open event</span>
   </button>`;
 
-const createPointsTypeMenuTemplate = (currentType, id ) =>
+const createPointsTypeMenuTemplate = (currentType, id) =>
   pointsType.map((typePoint) => {
     const typeLowerCase = typePoint.toLowerCase();
     const isChecked = currentType.toLowerCase() === typeLowerCase ? 'checked' : '';
@@ -59,15 +59,15 @@ const createDestinationTemplate = (destination) => {
 };
 
 const createOffersAvailableTemplate = (offers, offersId) => offers.map((offer) => {
-  const {title, priceOffer, id} = offer;
+  const { title, priceOffer, id } = offer;
   const checked = offersId.includes(id)
     ? 'checked'
     : '';
 
   return (
     `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getOfferAtr(title)}-${ id }" type="checkbox" name="event-offer-${getOfferAtr(title)}" ${ checked }>
-    <label class="event__offer-label" for="event-offer-${getOfferAtr(title)}-${ id }">
+    <input class="event__offer-checkbox  visually-hidden" id="event-offer-${getOfferAtr(title)}-${id}" type="checkbox" name="event-offer-${getOfferAtr(title)}" ${checked}>
+    <label class="event__offer-label" for="event-offer-${getOfferAtr(title)}-${id}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
       <span class="event__offer-price">${priceOffer}</span>
@@ -85,7 +85,7 @@ const isOffers = (offers, offersId) => offers.length !== 0 ? `<section  class="e
   : '';
 
 
-const createFormEditionTemplate = ({point, offers, destinations}) => {
+const createFormEditionTemplate = ({ point, offers, destinations }) => {
   const { id, type, dateFrom, dateTo, offersId, destinationId, basePrice } = point;
   // console.log(point)
   // console.log(offers)
@@ -163,8 +163,8 @@ const createFormEditionTemplate = ({point, offers, destinations}) => {
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">${ resetButtonText }</button>
-      ${ rollupButtonTemplate }
+      <button class="event__reset-btn" type="reset">${resetButtonText}</button>
+      ${rollupButtonTemplate}
     </header>
     <section class="event__details">
     ${checkedOffers}
@@ -177,30 +177,33 @@ const createFormEditionTemplate = ({point, offers, destinations}) => {
 
 
 export default class FormEditionView {
-  constructor({ point = BLANK_POINT, offers = [], destinations = []}) {
-    this.point = point;
+  #point = null;
+  #element = null;
+
+  constructor({ point = BLANK_POINT, offers = [], destinations = [] }) {
+    this.#point = point;
     this.offers = offers;
     this.destinations = destinations;
   }
 
 
-  getTemplate() {
+  get template() {
     return createFormEditionTemplate({
-      point: this.point,
+      point: this.#point,
       destinations: this.destinations,
       offers: this.offers
     });
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }
