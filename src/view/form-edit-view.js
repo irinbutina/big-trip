@@ -85,7 +85,7 @@ const isOffers = (offers, offersId) => offers.length !== 0 ? `<section  class="e
   : '';
 
 
-const createFormEditionTemplate = ({ point, offers, destinations }) => {
+const createFormEditTemplate = ({ point, offers, destinations }) => {
   const { id, type, dateFrom, dateTo, offersId, destinationId, basePrice } = point;
   // console.log(point)
   // console.log(offers)
@@ -176,7 +176,7 @@ const createFormEditionTemplate = ({ point, offers, destinations }) => {
 };
 
 
-export default class FormEditionView {
+export default class FormEditView {
   #point = null;
   #element = null;
 
@@ -188,7 +188,7 @@ export default class FormEditionView {
 
 
   get template() {
-    return createFormEditionTemplate({
+    return createFormEditTemplate({
       point: this.#point,
       destinations: this.destinations,
       offers: this.offers
