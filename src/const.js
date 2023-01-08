@@ -12,5 +12,11 @@ const DATE_FORMAT = {
   time: 'HH:mm'
 };
 
-export { POINTS_TYPE, pointsType, DATE_FORMAT};
+const LIST_EMPTY_MESSAGES = {
+  everything: 'Click New Event to create your first point',
+  past: 'There are no past events now',
+  future: 'There are no future events now'
+};
+
+export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES};
 

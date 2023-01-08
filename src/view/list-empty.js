@@ -1,15 +1,16 @@
 import { createElement } from '../utils/render.js';
+import { LIST_EMPTY_MESSAGES} from '../const.js';
 
 function createListEmptyTemplate() {
   return (
     `<p class="trip-events__msg">
-      Click New Event to create your first point
+    ${LIST_EMPTY_MESSAGES.future}
     </p>`
   );
 }
 
 
-export default class FilterView {
+export default class ListEmptyView {
   #element = null;
 
   get template() {

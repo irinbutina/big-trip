@@ -8,3 +8,6 @@ export const getPossibleOffers = (offers, type) => offers.find((offer) => offer.
 
 
 export const getCurrentDestination = (destinations, id) => destinations.find((destination) => destination.id === id);
+
+
+export const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
