@@ -34,10 +34,42 @@ export default class RoutePointsPresenter {
   }
 
   #renderPoint(point) {
+    // const currentPoint = {
+    //   point,
+    //   offers: this.#offers,
+    //   destinations: this.#destinations,
+    // };
+    // console.log(currentPoint.point)
+    // console.log(point)
+    // const pointComponent = new RoutePointView({currentPoint});
+
+    // const editPointComponent = new FormEditView({currentPoint});
     const pointComponent = new RoutePointView({
       point,
       offers: this.#offers,
       destinations: this.#destinations,
+    });
+
+    const editPointComponent = new FormEditView({
+      point,
+      destinations: this.#destinations,
+      offers: this.#offers,
+    });
+
+    const replaceCardToForm = () => {
+      this.#tripEventsListComponent.element.replaceChild(editPointComponent.element, pointComponent.element);
+    };
+
+    const replaceFormToCard = () => {
+      this.#tripEventsListComponent.element.replaceChild(pointComponent.element, editPointComponent.element);
+    };
+
+    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceCardToForm();
+    });
+
+    editPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+      replaceFormToCard();
     });
 
     render(pointComponent, this.#tripEventsListComponent.element);
