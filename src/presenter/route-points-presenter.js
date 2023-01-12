@@ -9,6 +9,7 @@ import { isEscKey } from '../utils/utils.js';
 
 export default class RoutePointsPresenter {
   #tripEventsContainer = null;
+  #filtersContainer = null;
   #pointsModel = null;
   #offersModel = null;
   #destinationsModel = null;
@@ -23,8 +24,9 @@ export default class RoutePointsPresenter {
     render(new ListEmtyView(), this.#tripEventsContainer);
   }
 
-  constructor({ tripEventsContainer, pointsModel, offersModel, destinationsModel }) {
+  constructor({ tripEventsContainer, filtersContainer, pointsModel, offersModel, destinationsModel }) {
     this.#tripEventsContainer = tripEventsContainer;
+    this.#filtersContainer = filtersContainer;
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
@@ -70,12 +72,12 @@ export default class RoutePointsPresenter {
     render(pointComponent, this.#tripEventsListComponent.element);
   }
 
-  init(filtersContainer) {
+  init() {
     this.#routePoints = [...this.#pointsModel.points];
     this.#offers = [...this.#offersModel.offers];
     this.#destinations = [...this.#destinationsModel.destinations];
 
-    render(new FilterView(), filtersContainer);
+    render(new FilterView(), this.#filtersContainer);
 
     if (!this.#routePoints.length) {
       this.#renderEmptyList();

@@ -178,20 +178,22 @@ const createFormEditTemplate = ({ point, offers, destinations }) => {
 
 export default class FormEditView {
   #point = null;
+  #offers = null;
+  #destinations = null;
   #element = null;
 
   constructor({ point = BLANK_POINT, offers = [], destinations = [] }) {
     this.#point = point;
-    this.offers = offers;
-    this.destinations = destinations;
+    this.#offers = offers;
+    this.#destinations = destinations;
   }
 
 
   get template() {
     return createFormEditTemplate({
       point: this.#point,
-      destinations: this.destinations,
-      offers: this.offers
+      destinations: this.#destinations,
+      offers: this.#offers
     });
   }
 

@@ -4,7 +4,7 @@ import { LIST_EMPTY_MESSAGES} from '../const.js';
 function createListEmptyTemplate() {
   return (
     `<p class="trip-events__msg">
-    ${LIST_EMPTY_MESSAGES.future}
+    ${LIST_EMPTY_MESSAGES.past}
     </p>`
   );
 }

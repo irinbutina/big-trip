@@ -7,17 +7,18 @@ const siteHeaderElement = document.querySelector('.page-header');
 const siteMainElement = document.querySelector('.page-main');
 
 const filtersContainerElement = siteHeaderElement.querySelector('.trip-controls__filters');
-const tripEventsElement = siteMainElement.querySelector('.trip-events');
+const tripEventsContainerElement = siteMainElement.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 
-const routePointsPresenter = new RoutePointsPresenter({tripEventsContainer: tripEventsElement,
+const routePointsPresenter = new RoutePointsPresenter({tripEventsContainer: tripEventsContainerElement,
+  filtersContainer: filtersContainerElement,
   pointsModel,
   offersModel,
   destinationsModel
 });
 
-routePointsPresenter.init(filtersContainerElement);
+routePointsPresenter.init();
 
