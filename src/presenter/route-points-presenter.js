@@ -1,10 +1,10 @@
+import {render} from '../framework/render.js';
 import FormEditView from '../view/form-edit-view.js';
 import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import ListEmtyView from '../view/list-empty.js';
-import { render } from '../utils/render.js';
 import { isEscKey } from '../utils/utils.js';
 
 export default class RoutePointsPresenter {
@@ -33,39 +33,46 @@ export default class RoutePointsPresenter {
   }
 
   #renderPoint(point, offers, destinations) {
-    const pointComponent = new RoutePointView({ point, offers, destinations });
-
-    const editPointComponent = new FormEditView({ point, offers, destinations });
-
-    const replaceCardToForm = () => {
-      this.#tripEventsListComponent.element.replaceChild(editPointComponent.element, pointComponent.element);
-    };
-
-    const replaceFormToCard = () => {
-      this.#tripEventsListComponent.element.replaceChild(pointComponent.element, editPointComponent.element);
-    };
-
     const onEscKeyDown = (evt) => {
       if (isEscKey(evt)) {
         evt.preventDefault();
-        replaceFormToCard();
+        replaceFormToCard.apply(this);
         document.removeEventListener('keydown', onEscKeyDown);
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      replaceCardToForm();
-      document.addEventListener('keydown', onEscKeyDown);
+    const pointComponent = new RoutePointView({
+      point,
+      offers,
+      destinations,
+      onPointClick:  () => {
+        replaceCardToForm.call(this);
+        document.addEventListener('keydown', onEscKeyDown);
+      }
     });
 
-    editPointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
-      replaceFormToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
+    const editPointComponent = new FormEditView({
+      point,
+      offers,
+      destinations,
+      onEditPointClick: () => {
+        replaceFormToCard.apply(this);
+        document.removeEventListener('keydown', onEscKeyDown);
+        console.log('onEditPointClick');
+      }
     });
+
+    function replaceCardToForm() {
+      this.#tripEventsListComponent.element.replaceChild(editPointComponent.element, pointComponent.element);
+    }
+
+    function replaceFormToCard() {
+      this.#tripEventsListComponent.element.replaceChild(pointComponent.element, editPointComponent.element);
+    }
 
     editPointComponent.element.addEventListener('submit', (evt) => {
       evt.preventDefault();
-      replaceFormToCard();
+      replaceFormToCard.apply(this);
       document.removeEventListener('keydown', onEscKeyDown);
     });
 

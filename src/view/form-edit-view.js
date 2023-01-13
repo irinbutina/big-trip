@@ -1,4 +1,4 @@
-import { createElement } from '../utils/render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { pointsType, DATE_FORMAT } from '../const.js';
 import { getFormatDate, getOfferAtr, getPossibleOffers, getCurrentDestination } from '../utils/utils.js';
 
@@ -176,18 +176,20 @@ const createFormEditTemplate = ({ point, offers, destinations }) => {
 };
 
 
-export default class FormEditView {
+export default class FormEditView extends AbstractView {
   #point = null;
   #offers = null;
   #destinations = null;
-  #element = null;
+  #handleEditPointClick = null;
 
-  constructor({ point = BLANK_POINT, offers = [], destinations = [] }) {
+  constructor({ point = BLANK_POINT, offers = [], destinations = [], onEditPointClick }) {
+    super();
     this.#point = point;
     this.#offers = offers;
     this.#destinations = destinations;
+    this.#handleEditPointClick = onEditPointClick;
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickEditPointkHandler);
   }
-
 
   get template() {
     return createFormEditTemplate({
@@ -197,15 +199,8 @@ export default class FormEditView {
     });
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #clickEditPointkHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditPointClick();
+  };
 }
