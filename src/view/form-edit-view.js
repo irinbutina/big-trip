@@ -188,7 +188,10 @@ export default class FormEditView extends AbstractView {
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleEditPointClick = onEditPointClick;
+
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickEditPointkHandler);
+
+    this.element.querySelector('.event--edit').addEventListener('submit', this.#clickEditPointkHandler);
   }
 
   get template() {

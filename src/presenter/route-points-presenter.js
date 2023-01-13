@@ -46,7 +46,7 @@ export default class RoutePointsPresenter {
       offers,
       destinations,
       onPointClick:  () => {
-        replaceCardToForm.call(this);
+        replaceCardToForm.apply(this);
         document.addEventListener('keydown', onEscKeyDown);
       }
     });
@@ -58,7 +58,6 @@ export default class RoutePointsPresenter {
       onEditPointClick: () => {
         replaceFormToCard.apply(this);
         document.removeEventListener('keydown', onEscKeyDown);
-        console.log('onEditPointClick');
       }
     });
 
@@ -69,12 +68,6 @@ export default class RoutePointsPresenter {
     function replaceFormToCard() {
       this.#tripEventsListComponent.element.replaceChild(pointComponent.element, editPointComponent.element);
     }
-
-    editPointComponent.element.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-      replaceFormToCard.apply(this);
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
 
     render(pointComponent, this.#tripEventsListComponent.element);
   }
