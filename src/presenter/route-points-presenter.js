@@ -6,6 +6,7 @@ import TripEventsListView from '../view/trip-events-list-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import ListEmtyView from '../view/list-empty.js';
 import { isEscKey } from '../utils/utils.js';
+import { generateFilter } from '../mock/filter.js';
 
 export default class RoutePointsPresenter {
   #tripEventsContainer = null;
@@ -72,12 +73,17 @@ export default class RoutePointsPresenter {
     render(pointComponent, this.#tripEventsListComponent.element);
   }
 
+  #renderFilters () {
+    const filters = generateFilter(this.#routePoints);
+    render(new FilterView({filters}), this.#filtersContainer);
+  }
+
   init() {
     this.#routePoints = [...this.#pointsModel.points];
     this.#offers = [...this.#offersModel.offers];
     this.#destinations = [...this.#destinationsModel.destinations];
 
-    render(new FilterView(), this.#filtersContainer);
+    this.#renderFilters();
 
     if (!this.#routePoints.length) {
       this.#renderEmptyList();
@@ -89,4 +95,5 @@ export default class RoutePointsPresenter {
 
     this.#routePoints.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
   }
+
 }

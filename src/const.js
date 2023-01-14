@@ -17,5 +17,10 @@ const LIST_EMPTY_MESSAGES = {
   past: 'There are no past events now',
 };
 
-export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES};
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+};
+
+export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES, FilterType};
 
