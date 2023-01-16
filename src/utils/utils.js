@@ -12,7 +12,4 @@ export const getCurrentDestination = (destinations, id) => destinations.find((de
 
 export const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-export const isPointFuture = (dateFrom) => {
-  // console.log(dayjs(dateFrom) , dayjs())
-  return dateFrom && dayjs(dateFrom).isAfter(dayjs());
-};
+export const isPointFuture = (dateFrom) => dateFrom && dayjs(dateFrom).isAfter(dayjs());

@@ -21,16 +21,16 @@ export default class RoutePointsPresenter {
 
   #tripEventsListComponent = new TripEventsListView();
 
-  #renderEmptyList() {
-    render(new ListEmtyView(), this.#tripEventsContainer);
-  }
-
   constructor({ tripEventsContainer, filtersContainer, pointsModel, offersModel, destinationsModel }) {
     this.#tripEventsContainer = tripEventsContainer;
     this.#filtersContainer = filtersContainer;
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#destinationsModel = destinationsModel;
+  }
+
+  #renderEmptyList() {
+    render(new ListEmtyView(), this.#tripEventsContainer);
   }
 
   #renderPoint(point, offers, destinations) {
@@ -78,11 +78,17 @@ export default class RoutePointsPresenter {
     render(new FilterView({filters}), this.#filtersContainer);
   }
 
-  init() {
-    this.#routePoints = [...this.#pointsModel.points];
-    this.#offers = [...this.#offersModel.offers];
-    this.#destinations = [...this.#destinationsModel.destinations];
+  #renderSort() {
+    render(new SortView(), this.#tripEventsContainer);
+  }
 
+  #renderPointsList() {
+    render(this.#tripEventsListComponent, this.#tripEventsContainer);
+
+    this.#routePoints.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
+  }
+
+  #renderBoard() {
     this.#renderFilters();
 
     if (!this.#routePoints.length) {
@@ -90,10 +96,16 @@ export default class RoutePointsPresenter {
       return;
     }
 
-    render(new SortView(), this.#tripEventsContainer);
-    render(this.#tripEventsListComponent, this.#tripEventsContainer);
+    this.#renderSort();
+    this.#renderPointsList();
+  }
 
-    this.#routePoints.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
+  init() {
+    this.#routePoints = [...this.#pointsModel.points];
+    this.#offers = [...this.#offersModel.offers];
+    this.#destinations = [...this.#destinationsModel.destinations];
+
+    this.#renderBoard();
   }
 
 }
