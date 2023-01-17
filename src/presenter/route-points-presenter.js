@@ -20,6 +20,8 @@ export default class RoutePointsPresenter {
   #destinations = [];
 
   #tripEventsListComponent = new TripEventsListView();
+  #sortComponent = new SortView();
+  #listEmptyComponent = new ListEmtyView();
 
   constructor({ tripEventsContainer, filtersContainer, pointsModel, offersModel, destinationsModel }) {
     this.#tripEventsContainer = tripEventsContainer;
@@ -29,8 +31,25 @@ export default class RoutePointsPresenter {
     this.#destinationsModel = destinationsModel;
   }
 
+  init() {
+    this.#routePoints = [...this.#pointsModel.points];
+    this.#offers = [...this.#offersModel.offers];
+    this.#destinations = [...this.#destinationsModel.destinations];
+
+    this.#renderBoard();
+  }
+
+  #renderFilters () {
+    const filters = generateFilter(this.#routePoints);
+    render(new FilterView({filters}), this.#filtersContainer);
+  }
+
   #renderEmptyList() {
-    render(new ListEmtyView(), this.#tripEventsContainer);
+    render(this.#listEmptyComponent, this.#tripEventsContainer);
+  }
+
+  #renderSort() {
+    render(this.#sortComponent, this.#tripEventsContainer);
   }
 
   #renderPoint(point, offers, destinations) {
@@ -73,19 +92,13 @@ export default class RoutePointsPresenter {
     render(pointComponent, this.#tripEventsListComponent.element);
   }
 
-  #renderFilters () {
-    const filters = generateFilter(this.#routePoints);
-    render(new FilterView({filters}), this.#filtersContainer);
-  }
-
-  #renderSort() {
-    render(new SortView(), this.#tripEventsContainer);
+  #renderPoints() {
+    this.#routePoints.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
   }
 
   #renderPointsList() {
     render(this.#tripEventsListComponent, this.#tripEventsContainer);
-
-    this.#routePoints.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
+    this. #renderPoints();
   }
 
   #renderBoard() {
@@ -99,13 +112,4 @@ export default class RoutePointsPresenter {
     this.#renderSort();
     this.#renderPointsList();
   }
-
-  init() {
-    this.#routePoints = [...this.#pointsModel.points];
-    this.#offers = [...this.#offersModel.offers];
-    this.#destinations = [...this.#destinationsModel.destinations];
-
-    this.#renderBoard();
-  }
-
 }

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 
 import { pointsType } from '../const.js';
 import { getRandomArrayElement, getRandomInteger, getRandomArrayElements } from '../utils/random.js';
@@ -22,7 +23,7 @@ export const generateRoutePoint = () => {
 
   const destination = getRandomArrayElement(generateDestinations());
   return {
-    id: Date.now() * Math.random(),
+    id: nanoid(),
     type,
     dateFrom,
     dateTo,
