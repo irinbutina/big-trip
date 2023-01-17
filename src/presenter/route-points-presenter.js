@@ -1,12 +1,10 @@
-import {render, replace} from '../framework/render.js';
-import FormEditView from '../view/form-edit-view.js';
+import {render} from '../framework/render.js';
 import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
-import RoutePointView from '../view/route-point-view.js';
 import ListEmtyView from '../view/list-empty.js';
-import { isEscKey } from '../utils/utils.js';
 import { generateFilter } from '../mock/filter.js';
+import PointPresenter from './point-presenter.js';
 
 export default class RoutePointsPresenter {
   #tripEventsContainer = null;
@@ -18,6 +16,7 @@ export default class RoutePointsPresenter {
   #routePoints = [];
   #offers = [];
   #destinations = [];
+  #pointsPresenter = new Map();
 
   #tripEventsListComponent = new TripEventsListView();
   #sortComponent = new SortView();
@@ -54,46 +53,20 @@ export default class RoutePointsPresenter {
   }
 
   #renderPoint(point, offers, destinations) {
-    const onEscKeyDown = (evt) => {
-      if (isEscKey(evt)) {
-        evt.preventDefault();
-        replaceFormToCard.apply(this);
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    const pointComponent = new RoutePointView({
-      point,
-      offers,
-      destinations,
-      onPointClick:  () => {
-        replaceCardToForm.apply(this);
-        document.addEventListener('keydown', onEscKeyDown);
-      }
+    const pointPresenter = new PointPresenter({
+      tripEventsListContainer: this.#tripEventsListComponent.element,
     });
-
-    const editPointComponent = new FormEditView({
-      point,
-      offers,
-      destinations,
-      onEditPointClick: () => {
-        replaceFormToCard.apply(this);
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    });
-
-    function replaceCardToForm() {
-      replace(editPointComponent, pointComponent);
-    }
-
-    function replaceFormToCard() {
-      replace(pointComponent, editPointComponent);
-    }
-    render(pointComponent, this.#tripEventsListComponent.element);
+    pointPresenter.init(point, offers, destinations);
+    this.#pointsPresenter.set(point.id, pointPresenter);
   }
 
   #renderPoints() {
     this.#routePoints.forEach((point) => this.#renderPoint(point, this.#offers, this.#destinations));
+  }
+
+  #clearPointList() {
+    this.#pointsPresenter.forEach((presenter) => presenter.destroy());
+    this.#pointsPresenter.clear();
   }
 
   #renderPointsList() {
