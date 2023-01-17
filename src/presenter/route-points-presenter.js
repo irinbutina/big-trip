@@ -1,4 +1,4 @@
-import {render} from '../framework/render.js';
+import {render, replace} from '../framework/render.js';
 import FormEditView from '../view/form-edit-view.js';
 import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
@@ -22,6 +22,7 @@ export default class RoutePointsPresenter {
   #tripEventsListComponent = new TripEventsListView();
   #sortComponent = new SortView();
   #listEmptyComponent = new ListEmtyView();
+
 
   constructor({ tripEventsContainer, filtersContainer, pointsModel, offersModel, destinationsModel }) {
     this.#tripEventsContainer = tripEventsContainer;
@@ -82,13 +83,12 @@ export default class RoutePointsPresenter {
     });
 
     function replaceCardToForm() {
-      this.#tripEventsListComponent.element.replaceChild(editPointComponent.element, pointComponent.element);
+      replace(editPointComponent, pointComponent);
     }
 
     function replaceFormToCard() {
-      this.#tripEventsListComponent.element.replaceChild(pointComponent.element, editPointComponent.element);
+      replace(pointComponent, editPointComponent);
     }
-
     render(pointComponent, this.#tripEventsListComponent.element);
   }
 
