@@ -13,3 +13,5 @@ export const getCurrentDestination = (destinations, id) => destinations.find((de
 export const isEscKey = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
 export const isPointFuture = (dateFrom) => dateFrom && dayjs(dateFrom).isAfter(dayjs());
+
+export const updateItem = (items, update) => items.map((item) => item.id === update.id ? update : item);

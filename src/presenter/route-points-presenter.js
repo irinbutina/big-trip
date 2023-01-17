@@ -5,6 +5,7 @@ import TripEventsListView from '../view/trip-events-list-view.js';
 import ListEmtyView from '../view/list-empty.js';
 import { generateFilter } from '../mock/filter.js';
 import PointPresenter from './point-presenter.js';
+import { updateItem } from '../utils/utils.js';
 
 export default class RoutePointsPresenter {
   #tripEventsContainer = null;
@@ -39,6 +40,16 @@ export default class RoutePointsPresenter {
     this.#renderBoard();
   }
 
+  #handleModeChange = () => {
+    this.#pointsPresenter.forEach((presenter) => presenter.resetView());
+  };
+
+  #handlePointChange = (updatedPoint) => {
+    this.#routePoints = updateItem(this.#routePoints, updatedPoint);
+    this.#pointsPresenter.get(updatedPoint.id).init(updatedPoint);
+  };
+
+
   #renderFilters () {
     const filters = generateFilter(this.#routePoints);
     render(new FilterView({filters}), this.#filtersContainer);
@@ -55,6 +66,8 @@ export default class RoutePointsPresenter {
   #renderPoint(point, offers, destinations) {
     const pointPresenter = new PointPresenter({
       tripEventsListContainer: this.#tripEventsListComponent.element,
+      onDataChange: this.#handlePointChange,
+      onModeChange: this.#handleModeChange
     });
     pointPresenter.init(point, offers, destinations);
     this.#pointsPresenter.set(point.id, pointPresenter);

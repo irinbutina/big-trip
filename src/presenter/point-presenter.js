@@ -3,9 +3,15 @@ import FormEditView from '../view/form-edit-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import { isEscKey } from '../utils/utils.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
 
 export default class PointPresenter {
   #tripEventsListContainer = null;
+  #handleDataChange = null;
+  #handleModeChange = null;
 
   #pointComponent = null;
   #editPointComponent = null;
@@ -14,8 +20,13 @@ export default class PointPresenter {
   #offers = null;
   #destinations = null;
 
-  constructor ({tripEventsListContainer}) {
+  #mode = Mode.DEFAULT;
+
+
+  constructor ({tripEventsListContainer, onDataChange,onModeChange}) {
     this.#tripEventsListContainer = tripEventsListContainer;
+    this.#handleDataChange = onDataChange;
+    this.#handleModeChange = onModeChange;
   }
 
   init(point, offers, destinations) {
@@ -45,16 +56,22 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#tripEventsListContainer.contains(prevPointComponent.element)) {
+    if (this.#mode === Mode.DEFAULT) {
       replace (this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#tripEventsListContainer.contains(prevPointEditComponent.element)) {
+    if (this.#mode === Mode.EDITING) {
       replace (this.#editPointComponent, prevPointEditComponent);
     }
 
     remove(prevPointComponent);
     remove(prevPointEditComponent);
+  }
+
+  resetView() {
+    if (this.#mode !== Mode.DEFAULT) {
+      this.#replaceFormToCard();
+    }
   }
 
   destroy() {
@@ -73,11 +90,14 @@ export default class PointPresenter {
 
   #replaceCardToForm() {
     replace(this.#editPointComponent, this.#pointComponent);document.addEventListener('keydown', this.#onEscKeyDown);
+    this.#handleModeChange();
+    this.#mode = Mode.EDITING;
   }
 
   #replaceFormToCard() {
     replace(this.#pointComponent, this.#editPointComponent);
     document.removeEventListener('keydown', this.#onEscKeyDown);
+    this.#mode = Mode.DEFAULT;
   }
 
   #handlePointClick = () => {
@@ -87,6 +107,10 @@ export default class PointPresenter {
   #handleEditPointClick = () => {
     this.#replaceFormToCard();
   };
+
+  // #handleDataChange = () => {
+
+  // }
 
 }
 
