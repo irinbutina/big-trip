@@ -5,7 +5,7 @@ import TripEventsListView from '../view/trip-events-list-view.js';
 import ListEmtyView from '../view/list-empty.js';
 import { generateFilter } from '../mock/filter.js';
 import PointPresenter from './point-presenter.js';
-import { updateItem } from '../utils/utils.js';
+import { getPossibleOffers, getCurrentDestination, updateItem } from '../utils/utils.js';
 
 export default class RoutePointsPresenter {
   #tripEventsContainer = null;
@@ -45,9 +45,9 @@ export default class RoutePointsPresenter {
   };
 
   #handlePointChange = (updatedPoint) => {
-    this.#routePoints = updateItem(this.#routePoints, updatedPoint);
-    this.#pointsPresenter.get(updatedPoint.id).init(updatedPoint);
     console.log(updatedPoint)
+    this.#routePoints = updateItem(this.#routePoints, updatedPoint);
+    this.#pointsPresenter.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
   };
 
 
@@ -65,6 +65,7 @@ export default class RoutePointsPresenter {
   }
 
   #renderPoint(point, offers, destinations) {
+    console.log(point, offers, destinations)
     const pointPresenter = new PointPresenter({
       tripEventsListContainer: this.#tripEventsListComponent.element,
       onDataChange: this.#handlePointChange,
