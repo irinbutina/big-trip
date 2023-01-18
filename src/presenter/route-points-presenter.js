@@ -47,6 +47,7 @@ export default class RoutePointsPresenter {
   #handlePointChange = (updatedPoint) => {
     this.#routePoints = updateItem(this.#routePoints, updatedPoint);
     this.#pointsPresenter.get(updatedPoint.id).init(updatedPoint);
+    console.log(updatedPoint)
   };
 
 

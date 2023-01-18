@@ -180,16 +180,18 @@ export default class FormEditView extends AbstractView {
   #point = null;
   #offers = null;
   #destinations = null;
+  #handleEditPointSubmit = null;
   #handleEditPointClick = null;
 
-  constructor({ point = BLANK_POINT, offers = [], destinations = [], onEditPointClick }) {
+  constructor({ point = BLANK_POINT, offers = [], destinations = [], onEditPointClick, onEditPointSubmit}) {
     super();
     this.#point = point;
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleEditPointClick = onEditPointClick;
+    this.#handleEditPointSubmit = onEditPointSubmit;
 
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickEditPointkHandler);
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#formSubmitHandler);
 
     this.element.querySelector('.event--edit').addEventListener('submit', this.#clickEditPointkHandler);
   }
@@ -206,4 +208,11 @@ export default class FormEditView extends AbstractView {
     evt.preventDefault();
     this.#handleEditPointClick();
   };
+
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditPointSubmit(this.#point);
+  };
 }
+
+

@@ -48,6 +48,7 @@ export default class PointPresenter {
       point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
+      onEditPointSubmit: this.#handleFormSubmit,
       onEditPointClick: this.#handleEditPointClick
     });
 
@@ -106,6 +107,11 @@ export default class PointPresenter {
 
   #handleEditPointClick = () => {
     this.#replaceFormToCard();
+  };
+
+  #handleFormSubmit = (point) => {
+    this.#replaceFormToCard();
+    this.#handleDataChange(point);
   };
 
   // #handleDataChange = () => {
