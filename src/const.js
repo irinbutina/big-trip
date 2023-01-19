@@ -56,5 +56,6 @@ const SortsTitle = [
   },
 ];
 
+
 export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES, FilterType, SortType, SortsTitle};
 

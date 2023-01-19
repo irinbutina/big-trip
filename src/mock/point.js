@@ -9,6 +9,7 @@ import { offersByTypes } from './offers.js';
 import { getPossibleOffers } from '../utils/utils.js';
 
 // const getDateFrom = () => dayjs().add(getRandomInteger(0, 10000), 'm').toDate() ;
+// const getDateFrom = () => (getRandomInteger(0, 4) > 5) ? dayjs().add(getRandomInteger(0, 10000), 'm').toDate() : dayjs().subtract(getRandomInteger(0, 10000), 'm').toDate();
 const getDateFrom = () => (getRandomInteger(0, 10) > 5) ? dayjs().add(getRandomInteger(0, 10000), 'm').toDate() : dayjs().subtract(getRandomInteger(0, 10000), 'm').toDate();
 
 

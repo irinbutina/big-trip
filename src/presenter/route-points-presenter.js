@@ -6,7 +6,7 @@ import ListEmtyView from '../view/list-empty.js';
 import { generateFilter } from '../mock/filter.js';
 import PointPresenter from './point-presenter.js';
 import { getPossibleOffers, getCurrentDestination, updateItem } from '../utils/utils.js';
-import { SortType } from '../const.js';
+import { SortType, FilterType } from '../const.js';
 import { sortPointsByPrice, sortPointsByDate } from '../utils/point.js';
 
 export default class RoutePointsPresenter {
@@ -16,12 +16,15 @@ export default class RoutePointsPresenter {
   #offersModel = null;
   #destinationsModel = null;
   #sortComponent = null;
+  #filtersComponent = null;
 
   #routePoints = [];
   #offers = [];
   #destinations = [];
   #pointsPresenter = new Map();
   #currentSortType = SortType.DAY;
+  #currentFilterType = FilterType.EVERYTHING;
+
 
   #tripEventsListComponent = new TripEventsListView();
   #listEmptyComponent = new ListEmtyView();
@@ -38,11 +41,10 @@ export default class RoutePointsPresenter {
 
   init() {
     this.#routePoints = [...this.#pointsModel.points].sort(sortPointsByDate);
-    this.#offers = [...this.#offersModel.offers];
-    this.#destinations = [...this.#destinationsModel.destinations];
-
     this.#sourcedRoutePoints = [...this.#pointsModel.points];
 
+    this.#offers = [...this.#offersModel.offers];
+    this.#destinations = [...this.#destinationsModel.destinations];
     this.#renderBoard();
   }
 
@@ -55,6 +57,7 @@ export default class RoutePointsPresenter {
     this.#sourcedRoutePoints = updateItem(this.#sourcedRoutePoints, updatedPoint);
     this.#pointsPresenter.get(updatedPoint.id).init(updatedPoint, this.#offers, this.#destinations);
   };
+
 
   #sortPoints(sortType) {
     switch (sortType) {
@@ -80,9 +83,38 @@ export default class RoutePointsPresenter {
   };
 
 
+  // #filterPoints(filterType) {
+  //   switch (filterType) {
+  //     case FilterType.EVERYTHING:
+  //       this.#routePoints = this.#sourcedRoutePoints;
+  //       return this.#routePoints.sort(sortPointsByDate);
+  //     case FilterType.FUTURE:
+  //       return this.#routePoints.filter((point) => isPointFuture(point.dateFrom));
+  //   }
+  // }
+
+  #handleFilterClick = ( filterType) => {
+    if (this.#currentFilterType === filterType) {
+      return;
+    }
+    // this.#routePoints = this.#filterPoints(filterType);
+    this.#currentFilterType = filterType;
+    // this.#clearPointList();
+    remove(this.#filtersComponent);
+    this.#renderFilters();
+    // this.#renderPointsList();
+    console.log(filterType)
+  };
+
+
   #renderFilters () {
     const filters = generateFilter(this.#routePoints);
-    render(new FilterView({filters}), this.#filtersContainer);
+    this.#filtersComponent = new FilterView({
+      filters,
+      currentFilterType: this.#currentFilterType,
+      onFilterChange: this.#handleFilterClick
+    });
+    render(this.#filtersComponent, this.#filtersContainer);
   }
 
   #renderEmptyList() {
