@@ -111,7 +111,7 @@ export default class PointPresenter {
 
   #handleEditPointSubmit = (point) => {
     this.#replaceFormToCard();
-    this.#handleDataChange(point);q
+    this.#handleDataChange(point);
   };
 
   // #handleDataChange = () => {

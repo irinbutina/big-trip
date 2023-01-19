@@ -22,5 +22,39 @@ const FilterType = {
   FUTURE: 'future',
 };
 
-export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES, FilterType};
+const SortType = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};
+
+const SortsTitle = [
+  {
+    title: 'day',
+    type: SortType.DAY,
+  },
+  {
+    title: 'event',
+    isDisabled: true,
+    type: SortType.EVENT,
+  },
+  {
+    title: 'time',
+    isDisabled: true,
+    type: SortType.TIME,
+  },
+  {
+    title: 'price',
+    type: SortType.PRICE,
+  },
+  {
+    title: 'offers',
+    isDisabled: true,
+    type: SortType.OFFERS,
+  },
+];
+
+export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES, FilterType, SortType, SortsTitle};
 
