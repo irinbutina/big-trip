@@ -113,9 +113,4 @@ export default class PointPresenter {
     this.#replaceFormToCard();
     this.#handleDataChange(point);
   };
-
-  // #handleDataChange = () => {
-
-  // }
-
 }
