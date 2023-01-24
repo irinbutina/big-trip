@@ -60,13 +60,11 @@ const createDestinationTemplate = (destination) => {
 
 const createOffersAvailableTemplate = (offers, offersId) => offers.map((offer) => {
   const { title, priceOffer, id } = offer;
-  const checked = offersId.includes(id)
-    ? 'checked'
-    : '';
+  const isChecked = offersId.includes(id) ? 'checked' : '';
 
   return (
     `<div class="event__offer-selector">
-    <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getOfferAtr(title)}-${id}" type="checkbox" name="event-offer-${getOfferAtr(title)}" ${checked}>
+    <input class="event__offer-checkbox  visually-hidden" data-offer-id="${id}" id="event-offer-${getOfferAtr(title)}-${id}" type="checkbox" name="event-offer-${getOfferAtr(title)}" ${isChecked}>
     <label class="event__offer-label" for="event-offer-${getOfferAtr(title)}-${id}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
@@ -87,9 +85,6 @@ const isOffers = (offers, offersId) => offers.length !== 0 ? `<section  class="e
 
 const createFormEditTemplate = (point, offers, destinations) => {
   const { id, type, dateFrom, dateTo, offersId, destinationId, basePrice } = point;
-  // console.log(point)
-  // console.log(offers)
-  // console.log(destinations)
 
   const isNew = id === '';
   const rollupButtonTemplate = !isNew ? createRollupButtonTemplate() : '';
@@ -159,7 +154,7 @@ const createFormEditTemplate = (point, offers, destinations) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
+        <input class="event__input  event__input--price" id="event-price-${id}" type="number" name="event-price" value="${basePrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -209,25 +204,21 @@ export default class FormEditView extends AbstractStatefulView {
 
     this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceInputHandler);
 
-    this.element.querySelectorAll('input[type=radio]').forEach((item) => item.addEventListener('change', this.#pointTypeChangeHandler));
+    this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
 
     if ((getPossibleOffers(this.#offers, this._state.type)).offers.length) {
-      this.element.querySelectorAll('input[type=checkbox]').forEach((item) => item.addEventListener('change', this.#offerChangeHandler));
+      this.element.querySelector('.event__available-offers')
+        .addEventListener('change', this.#pointOfferChangeHandler);
     }
-    // if ((getPossibleOffers(this.#offers, this._state.type)).offers.length) {
-    //   this.element.querySelector('.event__available-offers')
-    //     .addEventListener('change', this.#offerChangeHandler);
-    // }
   }
 
-
   static parsePointToState(point) {
-    console.log(point)
+    // console.log(point)
     return {...point};
   }
 
   static parseStateToPoint(state) {
-    console.log(state)
+    // console.log(state)
     return { ...state };
   }
 
@@ -241,6 +232,12 @@ export default class FormEditView extends AbstractStatefulView {
 
   #pointPriceInputHandler = (evt) => {
     evt.preventDefault();
+    if (!new RegExp(/^[1-9]\d{0,5}$/).test(evt.target.value) ||
+      evt.target.value < 1) {
+      evt.target.setCustomValidity('Enter a positive integer.');
+    } else {
+      evt.target.setCustomValidity('');
+    }
     this._setState({
       basePrice: evt.target.value
     });
@@ -250,35 +247,22 @@ export default class FormEditView extends AbstractStatefulView {
     evt.preventDefault();
 
     const selectedType = evt.target.value;
-
-
     this.updateElement({
       type: selectedType,
     });
   };
 
-  #offerChangeHandler = (evt) => {
+  #pointOfferChangeHandler = (evt) => {
     evt.preventDefault();
-    console.log(evt.target.dataset.offerId)
-    const allOffers = (getPossibleOffers(this.#offers, this._state.type)).offers
-    const currentOfferId = allOffers.filter((offer) => {
-      console.log(offer.id)
-      console.log(evt.target.dataset.offerId)
-     return offer.id === +evt.target.dataset.offerId
-  })
-    console.log(currentOfferId)
+    const currentOfferId = +evt.target.dataset.offerId;
 
-    // if (evt.target.tagName === 'INPUT') {
-    //   const currentOfferId = Number(evt.target.dataset.offerId);
-    //   const currentOfferIndex = this._state.offers.indexOf(currentOfferId);
+    const currentOfferIdIndex = this._state.offersId.indexOf(currentOfferId);
 
-    //   if (currentOfferIndex === -1) {
-    //     this._state.offers.push(currentOfferId);
-    //     return;
-    //   }
-
-    //   this._state.offers.splice(currentOfferIndex, 1);
-    // }
+    if (currentOfferIdIndex === -1) {
+      this._state.offersId.push(currentOfferId);
+    } else {
+      this._state.offersId.splice(currentOfferIdIndex, 1);
+    }
   };
 
   #clickEditPointkHandler = (evt) => {
