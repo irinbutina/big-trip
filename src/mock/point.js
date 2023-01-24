@@ -24,6 +24,7 @@ export const generateRoutePoint = () => {
   const offersId = getRandomArrayElements(getOffersId, 0, getOffersId.length);
 
   const destination = getRandomArrayElement(generateDestinations());
+  // console.log(destination)
   return {
     id: nanoid(),
     type,

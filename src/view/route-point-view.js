@@ -13,8 +13,9 @@ const createOffersMarkup = (offers) => (offers.length) ?
   ).join('\n') : NO_ADDITIONAL_OFFERS_TEXT;
 
 
-const createRoutePointTemplate = ({ point, offers, destinations }) => {
+const createRoutePointTemplate = (point, offers, destinations) => {
   const { type, dateFrom, dateTo, basePrice, offersId, destinationId } = point;
+  // console.log(point)
   // console.log(offers)
 
   const typeLowerCase = type.toLowerCase();
@@ -76,11 +77,7 @@ export default class RoutePointView extends AbstractView {
   }
 
   get template() {
-    return createRoutePointTemplate({
-      point: this.#point,
-      destinations: this.#destinations,
-      offers: this.#offers
-    });
+    return createRoutePointTemplate(this.#point, this.#offers, this.#destinations);
   }
 
   #clickPointHandler = (evt) => {
