@@ -16,7 +16,7 @@ const getDateFrom = () => (getRandomInteger(0, 10) > 5) ? dayjs().add(getRandomI
 export const generateRoutePoint = () => {
   const type = getRandomArrayElement(pointsType);
   const dateFrom = getDateFrom();
-  const a = getRandomInteger(30, 200);
+  const a = getRandomInteger(30, 3200);
   const dateTo = dayjs(dateFrom).add(a, 'm').toDate();
   const basePrice = getRandomInteger(MinCount.PRICE, MaxCount.PRICE) * 10;
   const possibleOffers = getPossibleOffers(offersByTypes, type).offers;
@@ -24,7 +24,6 @@ export const generateRoutePoint = () => {
   const offersId = getRandomArrayElements(getOffersId, 0, getOffersId.length);
 
   const destination = getRandomArrayElement(generateDestinations());
-  // console.log(destination)
   return {
     id: nanoid(),
     type,
