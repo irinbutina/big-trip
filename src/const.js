@@ -12,14 +12,16 @@ const DATE_FORMAT = {
   time: 'HH:mm'
 };
 
-const LIST_EMPTY_MESSAGES = {
-  everything: 'Click New Event to create your first point',
-  past: 'There are no past events now',
-};
-
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
+  // PAST: 'past',
+};
+
+const LIST_EMPTY_MESSAGES = {
+  [FilterType.EVERYTHING]: 'Click New Event to create your first point',
+  // [FilterType.PAST]: 'There are no past events now',
+  [FilterType.FUTURE]: 'There are no future events now',
 };
 
 const SortType = {
@@ -56,6 +58,18 @@ const SortsTitle = [
   },
 ];
 
+const UserAction = {
+  UPDATE_POINT: 'UPDATE_POINT',
+  ADD_POINT: 'ADD_POINT',
+  DELETE_POINT: 'DELETE_POINT',
+};
 
-export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES, FilterType, SortType, SortsTitle};
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+
+export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES, FilterType, SortType, SortsTitle, UserAction, UpdateType};
 

@@ -4,6 +4,7 @@ import { getFormatDate, getOfferAtr, getPossibleOffers, getCurrentDestination } 
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
+
 const DEFAULT_POINT_TYPE = pointsType[0].toLocaleLowerCase();
 
 const BLANK_POINT = {
@@ -178,16 +179,18 @@ export default class FormEditView extends AbstractStatefulView {
   #destinations = null;
   #handleEditPointSubmit = null;
   #handleEditPointClick = null;
+  #handleEditPointDelete = null;
   #datepickerFrom = null;
   #datepickerTo = null;
 
-  constructor({ point = BLANK_POINT, offers = [], destinations = [], onEditPointClick, onEditPointSubmit}) {
+  constructor({ point = BLANK_POINT, offers = [], destinations = [], onEditPointClick, onEditPointSubmit, onEditPointDeleteClick}) {
     super();
     this._setState(FormEditView.parsePointToState(point));
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleEditPointClick = onEditPointClick;
     this.#handleEditPointSubmit = onEditPointSubmit;
+    this.#handleEditPointDelete = onEditPointDeleteClick;
     this._restoreHandlers();
   }
 
@@ -203,6 +206,8 @@ export default class FormEditView extends AbstractStatefulView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickEditPointkHandler);
 
     this.element.querySelector('form').addEventListener('submit', this.#editPointSubmitHandler);
+
+    this.element.querySelector('.event__reset-btn').addEventListener('click', this.#editPointDeleteHandler);
 
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationInputHandler);
 
@@ -333,6 +338,11 @@ export default class FormEditView extends AbstractStatefulView {
     evt.preventDefault();
 
     this.#handleEditPointSubmit(FormEditView.parseStateToPoint(this._state));
+  };
+
+  #editPointDeleteHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleEditPointDelete(FormEditView.parseStateToPoint(this._state));
   };
 }
 

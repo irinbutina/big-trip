@@ -1,7 +1,8 @@
 import {render, replace, remove} from '../framework/render.js';
 import FormEditView from '../view/form-edit-view.js';
 import RoutePointView from '../view/route-point-view.js';
-import { isEscKey } from '../utils/utils.js';
+import { isEscKey, isDatesEqual, isPriceEqual } from '../utils/utils.js';
+import {UserAction, UpdateType } from '../const.js' ;
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -50,7 +51,8 @@ export default class PointPresenter {
       offers: this.#offers,
       destinations: this.#destinations,
       onEditPointClick: this.#handleEditPointClick,
-      onEditPointSubmit: this.#handleEditPointSubmit
+      onEditPointSubmit: this.#handleEditPointSubmit,
+      onEditPointDeleteClick: this.#handleDeleteClick,
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -113,8 +115,28 @@ export default class PointPresenter {
     this.#replaceFormToCard();
   };
 
-  #handleEditPointSubmit = (point) => {
+  #handleEditPointSubmit = (update) => {
+    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление.
+    //к ним относятстя изменение дат и цены
+    const isMinorUpdate =
+      !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
+      !isDatesEqual(this.#point.dateTo, update.dateTo) ||
+      !isPriceEqual(this.#point.basePrice, update.basePrice);
+
+    this.#handleDataChange(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update,
+    );
     this.#replaceFormToCard();
-    this.#handleDataChange(point);
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#handleDataChange(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    );
   };
 }
