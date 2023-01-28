@@ -61,11 +61,11 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#mode === Mode.DEFAULT) { console.log('def')
+    if (this.#mode === Mode.DEFAULT) {
       replace (this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#mode === Mode.EDITING) { console.log('edit')
+    if (this.#mode === Mode.EDITING) {
       replace (this.#editPointComponent, prevPointEditComponent);
     }
 
@@ -124,7 +124,6 @@ export default class PointPresenter {
       !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
       !isDatesEqual(this.#point.dateTo, update.dateTo) ||
       !isPriceEqual(this.#point.basePrice, update.basePrice);
-      console.log(isMinorUpdate)
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,

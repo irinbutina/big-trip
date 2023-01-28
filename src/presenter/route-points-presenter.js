@@ -7,7 +7,6 @@ import NewPointPresenter from './new-point-presenter.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortPointsByPrice, sortPointsByDate } from '../utils/point.js';
 import { filtersByType } from '../utils/filter.js';
-import { BLANK_POINT } from '../const.js';
 
 export default class RoutePointsPresenter {
   #tripEventsContainer = null;
@@ -46,7 +45,7 @@ export default class RoutePointsPresenter {
       onDataChange: this.#handleViewAction,
       onDestroy: onNewPointDestroy,
     });
-  
+
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -55,14 +54,10 @@ export default class RoutePointsPresenter {
     this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
     const filteredPoints = filtersByType[this.#filterType](points);
-    console.log(points)
-
     switch (this.#currentSortType) {
       case SortType.DAY:
-        // console.log(filteredPoints)
         return filteredPoints.sort(sortPointsByDate);
       case SortType.PRICE:
-        // console.log(filteredPoints)
         return filteredPoints.sort(sortPointsByPrice);
     }
     return filteredPoints;
@@ -175,7 +170,6 @@ export default class RoutePointsPresenter {
 
   #renderBoard() {
     const points = this.points;
-    console.log(points)
 
     if (points.length === 0) {
       this.#renderEmptyList();

@@ -1,3 +1,4 @@
+import he from 'he';
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 import { pointsType, DATE_FORMAT, FormType, BLANK_POINT } from '../const.js';
 import { getFormatDate, getOfferAtr, getPossibleOffers, getCurrentDestination } from '../utils/utils.js';
@@ -131,7 +132,7 @@ const createFormEditTemplate = (point, offers, destinations, formType) => {
         <label class="event__label  event__type-output" for="event-destination-${destinationId}">
         ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-${destinationId}" type="text" name="event-destination" value="${destinationCurrentName}" list="destination-list-1">
+        <input class="event__input  event__input--destination" id="event-destination-${destinationId}" type="text" name="event-destination" value="${he.encode(destinationCurrentName)}" list="destination-list-1">
         <datalist id="destination-list-1">
         ${destinationsListTemplate}
         </datalist>
@@ -150,7 +151,7 @@ const createFormEditTemplate = (point, offers, destinations, formType) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
+        <input class="event__input  event__input--price" id="event-price-${id}" type="text" pattern="[0-9]+"  name="event-price" value="${basePrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -210,7 +211,7 @@ export default class FormEditView extends AbstractStatefulView {
 
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#pointDestinationInputHandler);
 
-    this.element.querySelector('.event__input--price').addEventListener('change', this.#pointPriceInputHandler);
+    this.element.querySelector('.event__input--price').addEventListener('input', this.#pointPriceInputHandler);
 
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
 
@@ -276,21 +277,30 @@ export default class FormEditView extends AbstractStatefulView {
   }
 
   #pointDestinationInputHandler = (evt) => {
+    if(!this.#destinations.map((destination) => destination.destinationName).includes(evt.target.value)) {
+      evt.target.setCustomValidity('Choose one of the available cities.');
+    } else {
+      evt.target.setCustomValidity('');
+    }
+
     evt.preventDefault();
     const selectedDestination = this.#destinations.find((destination) => evt.target.value === destination.destinationName);
-    this.updateElement({
-      destinationId: selectedDestination.id
-    });
+    if (selectedDestination) {
+      this.updateElement({
+        destinationId: selectedDestination.id
+      });
+    }
   };
 
   #pointPriceInputHandler = (evt) => {
-    evt.preventDefault();
     if (!new RegExp(/^[1-9]\d{0,5}$/).test(evt.target.value) ||
       evt.target.value < 1) {
       evt.target.setCustomValidity('Enter a positive integer.');
     } else {
       evt.target.setCustomValidity('');
     }
+
+    evt.preventDefault();
     this._setState({
       basePrice: evt.target.value
     });
