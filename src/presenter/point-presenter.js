@@ -2,7 +2,7 @@ import {render, replace, remove} from '../framework/render.js';
 import FormEditView from '../view/form-edit-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import { isEscKey, isDatesEqual, isPriceEqual } from '../utils/utils.js';
-import {UserAction, UpdateType } from '../const.js' ;
+import {UserAction, UpdateType, FormType } from '../const.js' ;
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -24,17 +24,17 @@ export default class PointPresenter {
   #mode = Mode.DEFAULT;
 
 
-  constructor ({tripEventsListContainer, onDataChange,onModeChange}) {
+  constructor ({offers, destinations, tripEventsListContainer, onDataChange,onModeChange}) {
+    this.#offers = offers;
+    this.#destinations = destinations;
     this.#tripEventsListContainer = tripEventsListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
   }
 
 
-  init(point, offers, destinations) {
+  init(point) {
     this.#point = point;
-    this.#offers = offers;
-    this.#destinations = destinations;
 
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#editPointComponent;
@@ -53,6 +53,7 @@ export default class PointPresenter {
       onEditPointClick: this.#handleEditPointClick,
       onEditPointSubmit: this.#handleEditPointSubmit,
       onEditPointDeleteClick: this.#handleDeleteClick,
+      formType: FormType.EDITING
     });
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
@@ -60,11 +61,11 @@ export default class PointPresenter {
       return;
     }
 
-    if (this.#mode === Mode.DEFAULT) {
+    if (this.#mode === Mode.DEFAULT) { console.log('def')
       replace (this.#pointComponent, prevPointComponent);
     }
 
-    if (this.#mode === Mode.EDITING) {
+    if (this.#mode === Mode.EDITING) { console.log('edit')
       replace (this.#editPointComponent, prevPointEditComponent);
     }
 
@@ -123,6 +124,7 @@ export default class PointPresenter {
       !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
       !isDatesEqual(this.#point.dateTo, update.dateTo) ||
       !isPriceEqual(this.#point.basePrice, update.basePrice);
+      console.log(isMinorUpdate)
 
     this.#handleDataChange(
       UserAction.UPDATE_POINT,

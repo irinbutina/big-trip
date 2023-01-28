@@ -19,7 +19,7 @@ export const generateRoutePoint = () => {
   const a = getRandomInteger(30, 3200);
   const dateTo = dayjs(dateFrom).add(a, 'm').toDate();
   const basePrice = getRandomInteger(MinCount.PRICE, MaxCount.PRICE) * 10;
-  const possibleOffers = getPossibleOffers(offersByTypes, type).offers;
+  const possibleOffers = getPossibleOffers(offersByTypes, type);
   const getOffersId = possibleOffers.map((offer) => offer.id);
   const offersId = getRandomArrayElements(getOffersId, 0, getOffersId.length);
 

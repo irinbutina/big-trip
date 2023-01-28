@@ -1,7 +1,7 @@
 import Observable from '../framework/observable.js';
 
 import {generateRoutePoint} from '../mock/point.js';
-const POINTS_AMOUNT = 5;
+const POINTS_AMOUNT = 2;
 
 export default class PointsModel extends Observable {
   #points = Array.from({length: POINTS_AMOUNT}, generateRoutePoint);

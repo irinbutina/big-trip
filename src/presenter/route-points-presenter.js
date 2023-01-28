@@ -3,9 +3,11 @@ import SortView from '../view/sort-view.js';
 import TripEventsListView from '../view/trip-events-list-view.js';
 import ListEmtyView from '../view/list-empty.js';
 import PointPresenter from './point-presenter.js';
+import NewPointPresenter from './new-point-presenter.js';
 import { SortType, UpdateType, UserAction, FilterType } from '../const.js';
 import { sortPointsByPrice, sortPointsByDate } from '../utils/point.js';
 import { filtersByType } from '../utils/filter.js';
+import { BLANK_POINT } from '../const.js';
 
 export default class RoutePointsPresenter {
   #tripEventsContainer = null;
@@ -15,9 +17,10 @@ export default class RoutePointsPresenter {
   #filterModel = null;
   #sortComponent = null;
 
-  #offers = [];
+  #offers = null;
   #destinations = [];
   #pointsPresenters = new Map();
+  #newPointPresenter = null;
   #currentSortType = SortType.DAY;
   #filterType = FilterType.EVERYTHING;
 
@@ -26,15 +29,24 @@ export default class RoutePointsPresenter {
 
   #tripEventsListComponent = new TripEventsListView();
 
-  constructor({ tripEventsContainer, pointsModel, offersModel, destinationsModel, filterModel }) {
+  constructor({ tripEventsContainer, pointsModel, offersModel, destinationsModel, filterModel, onNewPointDestroy }) {
     this.#tripEventsContainer = tripEventsContainer;
     this.#pointsModel = pointsModel;
     this.#offersModel = offersModel;
     this.#filterModel = filterModel;
     this.#destinationsModel = destinationsModel;
+
     this.#offers = this.#offersModel.offers;
     this.#destinations = this.#destinationsModel.destinations;
 
+    this.#newPointPresenter = new NewPointPresenter({
+      offers: this.#offers,
+      destinations: this.#destinations,
+      tripEventsListContainer: this.#tripEventsListComponent.element,
+      onDataChange: this.#handleViewAction,
+      onDestroy: onNewPointDestroy,
+    });
+  
     this.#pointsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
@@ -42,12 +54,15 @@ export default class RoutePointsPresenter {
   get points() {
     this.#filterType = this.#filterModel.filter;
     const points = this.#pointsModel.points;
-    const filteredPoints = filtersByType[ this.#filterType](points);
+    const filteredPoints = filtersByType[this.#filterType](points);
+    console.log(points)
 
     switch (this.#currentSortType) {
       case SortType.DAY:
+        // console.log(filteredPoints)
         return filteredPoints.sort(sortPointsByDate);
       case SortType.PRICE:
+        // console.log(filteredPoints)
         return filteredPoints.sort(sortPointsByPrice);
     }
     return filteredPoints;
@@ -59,6 +74,7 @@ export default class RoutePointsPresenter {
   }
 
   #handleModeChange = () => {
+    this.#newPointPresenter.destroy();
     this.#pointsPresenters.forEach((presenter) => presenter.resetView());
   };
 
@@ -125,13 +141,15 @@ export default class RoutePointsPresenter {
     render(this.#sortComponent, this.#tripEventsContainer);
   }
 
-  #renderPoint(point, offers, destinations) {
+  #renderPoint(point) {
     const pointPresenter = new PointPresenter({
+      offers: this.#offers,
+      destinations: this.#destinations,
       tripEventsListContainer: this.#tripEventsListComponent.element,
       onDataChange: this.#handleViewAction,
       onModeChange: this.#handleModeChange
     });
-    pointPresenter.init(point, offers, destinations);
+    pointPresenter.init(point);
     this.#pointsPresenters.set(point.id, pointPresenter);
   }
 
@@ -140,6 +158,7 @@ export default class RoutePointsPresenter {
   }
 
   #clearBoard({resetSortType = false} = {}) {
+    this.#newPointPresenter.destroy();
     this.#pointsPresenters.forEach((presenter) => presenter.destroy());
     this.#pointsPresenters.clear();
     remove(this.#sortComponent);
@@ -156,6 +175,7 @@ export default class RoutePointsPresenter {
 
   #renderBoard() {
     const points = this.points;
+    console.log(points)
 
     if (points.length === 0) {
       this.#renderEmptyList();
@@ -165,5 +185,11 @@ export default class RoutePointsPresenter {
     this.#renderSort();
     render(this.#tripEventsListComponent, this.#tripEventsContainer);
     this.#renderPoints(points);
+  }
+
+  createPoint() {
+    this.#currentSortType = SortType.DAY;
+    this.#filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this.#newPointPresenter.init();
   }
 }

@@ -1,21 +1,9 @@
 import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
-import { pointsType, DATE_FORMAT } from '../const.js';
+import { pointsType, DATE_FORMAT, FormType, BLANK_POINT } from '../const.js';
 import { getFormatDate, getOfferAtr, getPossibleOffers, getCurrentDestination } from '../utils/utils.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-
-const DEFAULT_POINT_TYPE = pointsType[0].toLocaleLowerCase();
-
-const BLANK_POINT = {
-  id: '',
-  type: DEFAULT_POINT_TYPE,
-  dateFrom: null,
-  dateTo: null,
-  destination: '',
-  offersId: [],
-  basePrice: 0,
-};
 
 const ResetButtonText = {
   CANCEL: 'Cancel',
@@ -86,17 +74,22 @@ const isOffers = (offers, offersId) => offers.length !== 0 ? `<section  class="e
   : '';
 
 
-const createFormEditTemplate = (point, offers, destinations) => {
+const createFormEditTemplate = (point, offers, destinations, formType) => {
   const { id, type, dateFrom, dateTo, offersId, destinationId, basePrice } = point;
 
-  const isNew = id === '';
-  const rollupButtonTemplate = !isNew ? createRollupButtonTemplate() : '';
-  const resetButtonText = isNew ? ResetButtonText.CANCEL
-    : ResetButtonText.DELETE;
+  let isEditPoint = true;
+
+  if (formType === FormType.ADDING) {
+    isEditPoint = false;
+  }
+
+  const rollupButtonTemplate = isEditPoint ? createRollupButtonTemplate() : '';
+
+  const resetButtonText = isEditPoint ? ResetButtonText.DELETE : ResetButtonText.CANCEL;
 
   const icon = type.toLowerCase();
 
-  const possibleOffers = offers.length !== 0 ? getPossibleOffers(offers, type).offers : [];
+  const possibleOffers = offers.length !== 0 ? getPossibleOffers(offers, type) : [];
 
   const checkedOffers = isOffers(possibleOffers, offersId);
 
@@ -157,7 +150,7 @@ const createFormEditTemplate = (point, offers, destinations) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${id}" type="number" name="event-price" value="${basePrice}">
+        <input class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${basePrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -180,22 +173,24 @@ export default class FormEditView extends AbstractStatefulView {
   #handleEditPointSubmit = null;
   #handleEditPointClick = null;
   #handleEditPointDelete = null;
+  #formType = null;
   #datepickerFrom = null;
   #datepickerTo = null;
 
-  constructor({ point = BLANK_POINT, offers = [], destinations = [], onEditPointClick, onEditPointSubmit, onEditPointDeleteClick}) {
+  constructor({ point = BLANK_POINT, offers, destinations, onEditPointClick, onEditPointSubmit, onEditPointDeleteClick, formType = FormType.ADDING}) {
     super();
-    this._setState(FormEditView.parsePointToState(point));
+    this._setState(FormEditView.parsePointToState(point, this.#formType));
     this.#offers = offers;
     this.#destinations = destinations;
     this.#handleEditPointClick = onEditPointClick;
     this.#handleEditPointSubmit = onEditPointSubmit;
     this.#handleEditPointDelete = onEditPointDeleteClick;
+    this.#formType = formType;
     this._restoreHandlers();
   }
 
   get template() {
-    return createFormEditTemplate(this._state, this.#offers, this.#destinations);
+    return createFormEditTemplate(this._state, this.#offers, this.#destinations, this.#formType);
   }
 
   reset(point) {
@@ -203,7 +198,11 @@ export default class FormEditView extends AbstractStatefulView {
   }
 
   _restoreHandlers() {
-    this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickEditPointkHandler);
+    const rollupButtonElement = this.element.querySelector('.event__rollup-btn');
+    if (rollupButtonElement) {
+      rollupButtonElement.addEventListener('click', this.#clickEditPointkHandler);
+    }
+    // this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#clickEditPointkHandler);
 
     this.element.querySelector('form').addEventListener('submit', this.#editPointSubmitHandler);
 
@@ -215,7 +214,9 @@ export default class FormEditView extends AbstractStatefulView {
 
     this.element.querySelector('.event__type-list').addEventListener('change', this.#pointTypeChangeHandler);
 
-    if ((getPossibleOffers(this.#offers, this._state.type)).offers.length) {
+    // console.log(this.#offers, this._state.type)
+
+    if ((getPossibleOffers(this.#offers, this._state.type)).length) {
       this.element.querySelector('.event__available-offers')
         .addEventListener('change', this.#pointOfferChangeHandler);
     }
