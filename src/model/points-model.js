@@ -4,7 +4,17 @@ import {generateRoutePoint} from '../mock/point.js';
 const POINTS_AMOUNT = 2;
 
 export default class PointsModel extends Observable {
+  #pointsApiService = null;
   #points = Array.from({length: POINTS_AMOUNT}, generateRoutePoint);
+
+  constructor({pointsApiService}) {
+    super();
+    this.#pointsApiService = pointsApiService;
+
+    this.#pointsApiService.points.then((points) => {
+      console.log(points);
+    });
+  }
 
   get points() {
     return this.#points;
