@@ -70,6 +70,8 @@ const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
+  ERROR: 'ERROR',
 };
 
 const FormType = {
@@ -84,9 +86,9 @@ const BLANK_POINT = {
   type: DEFAULT_POINT_TYPE,
   dateFrom: getTodayDate(),
   dateTo: getTodayDate(),
-  destinationId: '',
+  destinationId: null,
   offersId: [],
-  basePrice: 0,
+  basePrice: '',
 };
 
 

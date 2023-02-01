@@ -1,6 +1,6 @@
 import {remove, render, RenderPosition} from '../framework/render.js';
 import FormEditView from '../view/form-edit-view.js';
-import {nanoid} from 'nanoid';
+// import {nanoid} from 'nanoid';
 import {UserAction, UpdateType} from '../const.js';
 import { isEscKey } from '../utils/utils.js';
 
@@ -11,23 +11,27 @@ export default class NewPointPresenter {
   #handleDestroy = null;
 
   #editPointComponent = null;
-  #destinations = null;
-  #offers = null;
+  #point = null;
+  #destinations = [];
+  #offers = [];
 
-  constructor({offers, destinations, tripEventsListContainer, onDataChange, onDestroy}) {
-    this.#offers = offers;
-    this.#destinations = destinations;
+  constructor({tripEventsListContainer, onDataChange, onDestroy}) {
     this.#tripEventsListContainer = tripEventsListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleDestroy = onDestroy;
   }
 
-  init() {
+  init(point, offers, destinations) {
+    this.#point = point;
+    this.#offers = offers;
+    this.#destinations = destinations;
+
     if (this.#editPointComponent !== null) {
       return;
     }
 
     this.#editPointComponent = new FormEditView({
+      point: this.#point,
       offers: this.#offers,
       destinations: this.#destinations,
       onEditPointSubmit: this.#handleEditPointSubmit,
@@ -56,7 +60,8 @@ export default class NewPointPresenter {
     this.#handleDataChange(
       UserAction.ADD_POINT,
       UpdateType.MINOR,
-      {id: nanoid(), ...point},
+      // {id: nanoid(), ...point},
+      point,
     );
     this.destroy();
   };

@@ -51,7 +51,7 @@ const createDestinationTemplate = (destination) => {
 };
 
 const createOffersAvailableTemplate = (offers, offersId) => offers.map((offer) => {
-  const { title, priceOffer, id } = offer;
+  const { title, price, id } = offer;
   const isChecked = offersId.includes(id) ? 'checked' : '';
 
   return (
@@ -60,7 +60,7 @@ const createOffersAvailableTemplate = (offers, offersId) => offers.map((offer) =
     <label class="event__offer-label" for="event-offer-${getOfferAtr(title)}-${id}">
       <span class="event__offer-title">${title}</span>
       &plus;&euro;&nbsp;
-      <span class="event__offer-price">${priceOffer}</span>
+      <span class="event__offer-price">${price}</span>
     </label>
     </div>`
   );
@@ -151,7 +151,7 @@ const createFormEditTemplate = (point, offers, destinations, formType) => {
           <span class="visually-hidden">Price</span>
           &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-${id}" type="text" pattern="[0-9]+"  name="event-price" value="${basePrice}">
+        <input class="event__input  event__input--price" id="event-price-${id}" type="number" pattern="[1-9]+"  name="event-price" value="${basePrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -242,7 +242,7 @@ export default class FormEditView extends AbstractStatefulView {
   }
 
   #setDateToPicker() {
-    this.#datepickerFrom = flatpickr(
+    this.#datepickerTo = flatpickr(
       this.element.querySelector('input[name=event-end-time'),
       {
         enableTime: true,
@@ -256,11 +256,22 @@ export default class FormEditView extends AbstractStatefulView {
   }
 
   static parsePointToState(point) {
-    return {...point};
+    return {
+      ...point,
+      isDisabled: false,
+      isSaving: false,
+      isDeleting: false,
+    };
   }
 
   static parseStateToPoint(state) {
-    return { ...state };
+    const point = { ...state };
+
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+
+    return point;
   }
 
   removeElement() {
@@ -293,7 +304,7 @@ export default class FormEditView extends AbstractStatefulView {
   };
 
   #pointPriceInputHandler = (evt) => {
-    if (!new RegExp(/^[1-9]\d{0,5}$/).test(evt.target.value) ||
+    if (!new RegExp(/^[1-9]\d{0,5}$/).test(+evt.target.value) ||
       evt.target.value < 1) {
       evt.target.setCustomValidity('Enter a positive integer.');
     } else {
@@ -302,7 +313,7 @@ export default class FormEditView extends AbstractStatefulView {
 
     evt.preventDefault();
     this._setState({
-      basePrice: evt.target.value
+      basePrice: +evt.target.value
     });
   };
 
