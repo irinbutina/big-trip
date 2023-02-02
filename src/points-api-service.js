@@ -9,17 +9,13 @@ const Method = {
 
 export default class PointsApiService extends ApiService {
   get points() {
-    const aaa = this._load({url: 'points'})
+    return this._load({url: 'points'})
       .then(ApiService.parseResponse);
-      console.log(aaa)
-    return aaa;
   }
 
   get offers() {
-    const bbb = this._load({ url: 'offers' })
+    return this._load({ url: 'offers' })
       .then(ApiService.parseResponse);
-      console.log(bbb)
-      return bbb;
   }
 
   get destinations() {
@@ -36,8 +32,6 @@ export default class PointsApiService extends ApiService {
     });
 
     const parsedResponse = await ApiService.parseResponse(response);
-
-    // console.log(parsedResponse)
     return parsedResponse;
   }
 
@@ -55,12 +49,10 @@ export default class PointsApiService extends ApiService {
   }
 
   async deletePoint(point) {
-    console.log(point.id)
     const response = await this._load({
       url: `points/${point.id}`,
       method: Method.DELETE,
     });
-    console.log(response)
 
     return response;
   }
@@ -69,7 +61,7 @@ export default class PointsApiService extends ApiService {
     const adaptedPoint = {
       ...point,
       'base_price': point.basePrice,
-      'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null, // На сервере дата хранится в ISO формате
+      'date_from': point.dateFrom instanceof Date ? point.dateFrom.toISOString() : null,
       'date_to': point.dateTo instanceof Date ? point.dateTo.toISOString() : null,
       'destination': point.destinationId,
       'offers': point.offersId,

@@ -41,44 +41,36 @@ export default class PointsModel extends Observable {
   }
 
   async updatePoint(updateType, update) {
-    console.log(update, updateType)
     const index = this.#points.findIndex((point) => point.id === update.id);
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting point');
     }
 
-    this._notify(updateType, update);
-
     try {
       const response = await this.#pointsApiService.updatePoint(update);
       const updatedPoint = this.#adaptToClient(response);
-      console.log(updatedPoint)
       this.#points = [
         ...this.#points.slice(0, index),
-        update,
+        updatedPoint,
         ...this.#points.slice(index + 1),
       ];
 
       this._notify(updateType, updatedPoint);
-      console.log(updatedPoint)
+
     } catch(err) {
       throw new Error('Can\'t update point');
     }
   }
 
   async addPoint(updateType, update) {
-
-    console.log(update)
     try {
       const response = await this.#pointsApiService.addPoint(update);
-
-      console.log(response)
       const newPoint = this.#adaptToClient(response);
-      console.log(this.#points)
       this.#points = [ newPoint, ...this.#points ];
-      console.log(this.#points)
+
       this._notify(updateType, newPoint);
+
     } catch(err) {
       throw new Error('Can\'t add point');
     }
@@ -97,7 +89,9 @@ export default class PointsModel extends Observable {
         ...this.#points.slice(0, index),
         ...this.#points.slice(index + 1),
       ];
+
       this._notify(updateType);
+
     } catch (err) {
       throw new Error('Can\'t delete point');
     }
@@ -106,8 +100,8 @@ export default class PointsModel extends Observable {
   #adaptToClient(point) {
     const adaptedPoint = {
       ...point,
-      dateFrom: point['date_from'] !== null ? new Date(point['date_from']) : point['date_from'], // На клиенте дата хранится как экземпляр Date
-      dateTo:  point['date_to'] !== null ? new Date(point['date_to']) : point['date_to'],
+      dateFrom: new Date(point['date_from']),
+      dateTo:  new Date(point['date_to']),
       destinationId: point['destination'],
       offersId: point['offers'],
       basePrice: point['base_price'],

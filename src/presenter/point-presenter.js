@@ -2,12 +2,7 @@ import {render, replace, remove} from '../framework/render.js';
 import FormEditView from '../view/form-edit-view.js';
 import RoutePointView from '../view/route-point-view.js';
 import { isEscKey, isDatesEqual, isPriceEqual } from '../utils/utils.js';
-import {UserAction, UpdateType, FormType } from '../const.js' ;
-
-const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
+import {UserAction, UpdateType, FormType, Mode } from '../const.js' ;
 
 export default class PointPresenter {
   #tripEventsListContainer = null;
@@ -24,7 +19,7 @@ export default class PointPresenter {
   #mode = Mode.DEFAULT;
 
 
-  constructor ({tripEventsListContainer, onDataChange,onModeChange}) {
+  constructor ({tripEventsListContainer, onDataChange, onModeChange}) {
     this.#tripEventsListContainer = tripEventsListContainer;
     this.#handleDataChange = onDataChange;
     this.#handleModeChange = onModeChange;
@@ -66,7 +61,8 @@ export default class PointPresenter {
     }
 
     if (this.#mode === Mode.EDITING) {
-      replace (this.#editPointComponent, prevPointEditComponent);
+      replace(this.#pointComponent, prevPointEditComponent);
+      this.#mode = Mode.DEFAULT;
     }
 
     remove(prevPointComponent);
@@ -83,6 +79,41 @@ export default class PointPresenter {
   destroy() {
     remove(this.#pointComponent);
     remove(this.#editPointComponent);
+  }
+
+  setSaving() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointComponent.updateElement({
+        isDisabled: true,
+        isSaving: true,
+      });
+    }
+  }
+
+  setDeleting() {
+    if (this.#mode === Mode.EDITING) {
+      this.#editPointComponent.updateElement({
+        isDisabled: true,
+        isDeleting: true,
+      });
+    }
+  }
+
+  setAborting() {
+    if (this.#mode === Mode.DEFAULT) {
+      this.#pointComponent.shake();
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#editPointComponent.updateElement({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this.#editPointComponent.shake(resetFormState);
   }
 
 
@@ -117,9 +148,6 @@ export default class PointPresenter {
   };
 
   #handleEditPointSubmit = (update) => {
-    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
-    // а значит требуют перерисовки списка - если таких нет, это PATCH-обновление.
-    //к ним относятстя изменение дат и цены
     const isMinorUpdate =
       !isDatesEqual(this.#point.dateFrom, update.dateFrom) ||
       !isDatesEqual(this.#point.dateTo, update.dateTo) ||
@@ -130,7 +158,6 @@ export default class PointPresenter {
       isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
       update,
     );
-    this.#replaceFormToCard();
   };
 
   #handleDeleteClick = (point) => {

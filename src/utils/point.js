@@ -1,22 +1,5 @@
 import dayjs from 'dayjs';
 
-// export const sortPointsByDate = () => {
-//   console.log('sortPointsByDate')
-// }
-
-// export const sortPointsByPrice = () => {
-//   console.log('sortPointsByPrice')
-// }
-
-// export const sortPointsByDate = (a, b) => dayjs(a.dateFrom).diff(b.dateFrom);
-
-// export const sortPointsByTime = (a, b) => {
-//   return dayjs(a.endTime).diff(a.startTime) - dayjs(b.endTime).diff(b.startTime);
-// };
-
-// export const sortPointsByPrice = (a, b) => b.basePrice - a.basePrice;
-
-
 const getWeightForNullValue = (valueA, valueB) => {
   if (valueA === null && valueB === null) {
     return 0;

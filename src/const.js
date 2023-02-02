@@ -17,12 +17,10 @@ const DATE_FORMAT = {
 const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
-  // PAST: 'past',
 };
 
 const LIST_EMPTY_MESSAGES = {
   [FilterType.EVERYTHING]: 'Click New Event to create your first point',
-  // [FilterType.PAST]: 'There are no past events now',
   [FilterType.FUTURE]: 'There are no future events now',
 };
 
@@ -92,5 +90,15 @@ const BLANK_POINT = {
 };
 
 
-export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES, FilterType, SortType, SortsTitle, UserAction, UpdateType, FormType, BLANK_POINT};
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
+
+export { POINTS_TYPE, pointsType, DATE_FORMAT, LIST_EMPTY_MESSAGES, FilterType, SortType, SortsTitle, UserAction, UpdateType, FormType, BLANK_POINT, Mode, TimeLimit};
 

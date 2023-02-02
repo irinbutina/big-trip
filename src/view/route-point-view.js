@@ -15,9 +15,6 @@ const createOffersMarkup = (offers) => (offers.length) ?
 
 const createRoutePointTemplate = (point, offers, destinations) => {
   const { type, dateFrom, dateTo, basePrice, offersId, destinationId } = point;
-  // console.log(point)
-  // console.log(offers)
-  // console.log(type)
 
   const typeLowerCase = type.toLowerCase();
 
@@ -27,7 +24,6 @@ const createRoutePointTemplate = (point, offers, destinations) => {
 
   const offersIdChecked = possibleOffers.filter(({ id }) =>
     offersId.includes(id));
-  // console.log(offersIdChecked)
 
   const destination = getCurrentDestination(destinations, destinationId);
   return (
