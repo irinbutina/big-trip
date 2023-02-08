@@ -331,6 +331,7 @@ export default class FormEditView extends AbstractStatefulView {
     const selectedType = evt.target.value;
     this.updateElement({
       type: selectedType,
+      offersId: []
     });
   };
 
